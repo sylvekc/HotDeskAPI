@@ -9,8 +9,10 @@ namespace HotDeskAPI.Entities
     public class Desk
     {
         public int Id { get; set; }
+        public int DeskNumber { get; set; }
         public string Description { get; set; }
         public int LocationID { get; set; }
+        public bool Available { get; set; }
         public virtual Location Location { get; set; }
 
     }

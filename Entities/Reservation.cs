@@ -12,6 +12,7 @@ namespace HotDeskAPI.Entities
         public int Id { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }
+        public DateTime CreatedAt { get; set; }
         public int DeskId { get; set; }
         public virtual Desk Desk { get; set; }
         public int UserId { get; set; }
