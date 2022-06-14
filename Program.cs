@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -37,9 +38,12 @@ builder.Services.AddAuthentication(option =>
 builder.Services.AddControllers().AddFluentValidation();
 builder.Services.AddDbContext<HotDeskDbContext>();
 builder.Services.AddScoped<Seeder>();
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IDeskService, DeskService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
+builder.Services.AddScoped<IValidator<AddDeskDto>, AddDeskDtoValidator>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
