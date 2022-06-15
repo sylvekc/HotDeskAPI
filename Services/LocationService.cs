@@ -49,6 +49,12 @@ namespace HotDeskAPI.Services
         public bool DeleteLocation(string name)
         {
             var location = _dbContext.Locations.FirstOrDefault(x => x.Name == name.ToUpper());
+            var desksInLocation = _dbContext.Desks.Any(x => x.LocationName == name);
+            if (desksInLocation)
+            {
+                throw new ForbidException("You can't delete location where are desks.");
+            }
+
             if (location is null)
             {
                 throw new NotFoundException($"Location with name {name.ToUpper()} doesn't exist");

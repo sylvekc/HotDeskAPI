@@ -38,5 +38,12 @@ namespace HotDeskAPI.Controllers
             return NoContent();
         }
 
+        [HttpPatch("changeAvailability/{deskNumber}")]
+        public ActionResult ChangeAvailability(int deskNumber)
+        {
+            _deskService.ChangeAvailability(deskNumber);
+            return Ok();
+        }
+
     }
 }

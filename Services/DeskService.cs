@@ -14,6 +14,7 @@ namespace HotDeskAPI.Services
     {
         int AddDesk(AddDeskDto dto);
         bool DeleteDesk(int deskNumber, string locationName);
+        bool ChangeAvailability(int deskNumber);
     }
 
     public class DeskService : IDeskService
@@ -44,15 +45,44 @@ namespace HotDeskAPI.Services
 
         public bool DeleteDesk(int deskNumber, string locationName)
         {
+            var reservedDesk = _dbContext.Reservations.Any(x => x.DeskNumber == deskNumber && x.To > DateTime.Now);
             var desk = _dbContext.Desks.FirstOrDefault(x => x.DeskNumber == deskNumber && x.Location.Name == locationName.ToUpper());
             if (desk is null)
             {
                 throw new NotFoundException($"Desk with number {deskNumber} in {locationName.ToUpper()} doesn't exist.");
             }
+
+            if (reservedDesk)
+            {
+                throw new ForbidException("You can't delete this desk, because it is reserved");
+            }
+
             _dbContext.Desks.Remove(desk);
             _dbContext.SaveChanges();
             return true;
         }
 
+        public bool ChangeAvailability(int deskNumber)
+        {
+            var desk = _dbContext.Desks.FirstOrDefault(x => x.DeskNumber == deskNumber);
+            if (desk is null)
+            {
+                throw new NotFoundException($"Desk with number {deskNumber} doesn't exist.");
+            }
+
+            if (desk.Available)
+            {
+                desk.Available = false;
+            }
+            else
+            {
+                desk.Available = true;
+            }
+
+            _dbContext.SaveChanges();
+            return true;
+        }
     }
+
 }
+
