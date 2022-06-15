@@ -12,7 +12,5 @@ namespace HotDeskAPI.Models
         public int DeskNumber { get; set; }
         public string Description { get; set; }
         public string LocationName { get; set; }
-        //public int LocationId { get; set; }
-        public bool Available { get; set; } = true;
     }
 }

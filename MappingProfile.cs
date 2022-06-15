@@ -4,11 +4,12 @@ using HotDeskAPI.Models;
 
 namespace HotDeskAPI
 {
-    public class DeskMappingProfile : Profile
+    public class MappingProfile : Profile
     {
-        public DeskMappingProfile()
+        public MappingProfile()
         {
             CreateMap<AddDeskDto, Desk>();
+            CreateMap<AddLocationDto, Location>();
         }
     }
 }

@@ -34,7 +34,7 @@ namespace HotDeskAPI.Services
             desk.LocationName = dto.LocationName;
             desk.Description = dto.Description;
             desk.DeskNumber = dto.DeskNumber;
-            desk.Available = dto.Available;
+            desk.Available = true;
             _dbContext.Desks.Add(desk);
             _dbContext.SaveChanges();
 

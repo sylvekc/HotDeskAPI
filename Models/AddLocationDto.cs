@@ -4,15 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HotDeskAPI.Entities
+namespace HotDeskAPI.Models
 {
-    public class Location
+    public class AddLocationDto
     {
-        public int Id { get; set; }
         public string Building { get; set; }
         public int Floor { get; set; }
         public int RoomNumber { get; set; }
-        public string Name { get; set; }
-        public virtual List<Desk> Desks { get; set; }
     }
 }

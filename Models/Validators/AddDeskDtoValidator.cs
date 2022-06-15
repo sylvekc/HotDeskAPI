@@ -12,7 +12,6 @@ namespace HotDeskAPI.Models.Validators
     {
         public AddDeskDtoValidator(HotDeskDbContext dbContext)
         {
-            RuleFor(x => x.Available).NotEmpty();
             RuleFor(x => x.Description).NotEmpty();
             RuleFor(x => x.DeskNumber).Custom((value, context) =>
             {

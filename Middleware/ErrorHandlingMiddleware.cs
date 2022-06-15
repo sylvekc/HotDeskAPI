@@ -20,6 +20,12 @@ namespace HotDeskAPI.Middleware
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsync(badRequest.Message);
             }
+
+            catch (ForbidException forbid)
+            {
+                context.Response.StatusCode = 403;
+                await context.Response.WriteAsync(forbid.Message);
+            }
         }
     }
 }
