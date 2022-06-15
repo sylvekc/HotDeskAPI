@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using HotDeskAPI.Entities;
+using HotDeskAPI.Exceptions;
 using HotDeskAPI.Models;
 
 namespace HotDeskAPI.Services
@@ -12,6 +13,7 @@ namespace HotDeskAPI.Services
     public interface IReservationService
     {
         int AddReservation(AddReservationDto dto);
+        bool ChangeDesk(int reservationId, ChangeDeskDto dto);
     }
 
     public class ReservationService : IReservationService
@@ -41,5 +43,29 @@ namespace HotDeskAPI.Services
             _dbContext.SaveChanges();
             return reservation.Id;
         }
+
+
+        public bool ChangeDesk(int reservationId, ChangeDeskDto dto)
+        {
+            var reservation = _dbContext.Reservations.FirstOrDefault(x => x.Id == reservationId);
+            var newDeskId = _dbContext.Desks.FirstOrDefault(x => x.DeskNumber == dto.DeskNumber).Id;
+            if (reservation is null)
+            {
+                throw new NotFoundException($"Reservation with ID: {reservation} doesn't exist.");
+            }
+
+            if (reservation.From < DateTime.Now.AddDays(1))
+            {
+                throw new ForbidException("You can change the desk at least 24h before reservation starts.");
+            }
+
+            reservation.DeskNumber = dto.DeskNumber;
+            reservation.DeskLocation = dto.DeskLocation;
+            reservation.CreatedAt = DateTime.Now;
+            reservation.DeskId = newDeskId;
+            _dbContext.SaveChanges();
+            return true;
+        }
+
     }
 }

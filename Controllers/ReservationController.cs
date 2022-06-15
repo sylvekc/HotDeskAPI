@@ -28,5 +28,12 @@ namespace HotDeskAPI.Controllers
             var reservationId = _reservationService.AddReservation(dto);
             return Created($"/api/reservation/{reservationId}", null);
         }
+
+        [HttpPatch("{reservationId}")]
+        public ActionResult ChangeDesk([FromRoute]int reservationId, [FromForm]ChangeDeskDto dto)
+        {
+            _reservationService.ChangeDesk(reservationId, dto);
+            return Ok();
+        }
     }
 }

@@ -48,6 +48,7 @@ builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator
 builder.Services.AddScoped<IValidator<AddDeskDto>, AddDeskDtoValidator>();
 builder.Services.AddScoped<IValidator<AddLocationDto>, AddLocationDtoValidator>();
 builder.Services.AddScoped<IValidator<AddReservationDto>, AddReservationDtoValidator>();
+builder.Services.AddScoped<IValidator<ChangeDeskDto>, ChangeDeskDtoValidator>();
 builder.Services.AddScoped<IUserContextService, UserContextService>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -15,6 +15,7 @@ namespace HotDeskAPI.Controllers
     [Authorize(Roles ="Admin")]
     public class LocationController : ControllerBase
     {
+
         private readonly ILocationService _locationService;
 
         public LocationController(ILocationService locationService)
@@ -22,12 +23,14 @@ namespace HotDeskAPI.Controllers
             _locationService = locationService;
         }
 
+
         [HttpPost]
         public ActionResult AddLocation([FromForm] AddLocationDto dto)
         {
             var locationId = _locationService.AddLocation(dto);
             return Created($"/api/location/{locationId}", null);
         }
+
 
         [HttpDelete("{name}")]
         public ActionResult DeleteLocation([FromRoute] string name)
