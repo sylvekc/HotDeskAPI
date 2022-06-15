@@ -24,12 +24,12 @@ namespace HotDeskAPI.Models.Validators
             });
 
 
-            RuleFor(x => x.LocationId).Custom((value, context) =>
+            RuleFor(x => x.LocationName).NotEmpty().Custom((value, context) =>
             {
-                var locationExist = dbContext.Locations.Any(u => u.Id == value);
+                var locationExist = dbContext.Locations.Any(u => u.Name == value);
                 if (!locationExist)
                 {
-                    context.AddFailure("Id", $"Location with number {value} doesn't exist.");
+                    context.AddFailure("LocationName", $"Location {value} doesn't exist.");
                 }
             });
         }

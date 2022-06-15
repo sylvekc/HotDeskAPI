@@ -12,6 +12,7 @@ namespace HotDeskAPI.Services
     public interface IDeskService
     {
         int AddDesk(AddDeskDto dto);
+        bool DeleteDesk(int deskNumber, string locationName);
     }
 
     public class DeskService : IDeskService
@@ -28,8 +29,9 @@ namespace HotDeskAPI.Services
         public int AddDesk(AddDeskDto dto)
         {
             var desk = _mapper.Map<Desk>(dto);
-
-            desk.LocationId = dto.LocationId;
+            int locationId = _dbContext.Locations.FirstOrDefault(x => x.Name == dto.LocationName).Id;
+            desk.LocationId = locationId;
+            desk.LocationName = dto.LocationName;
             desk.Description = dto.Description;
             desk.DeskNumber = dto.DeskNumber;
             desk.Available = dto.Available;
@@ -37,6 +39,15 @@ namespace HotDeskAPI.Services
             _dbContext.SaveChanges();
 
             return desk.Id;
+        }
+
+        public bool DeleteDesk(int deskNumber, string locationName)
+        {
+            var desk = _dbContext.Desks.FirstOrDefault(x => x.DeskNumber == deskNumber && x.Location.Name == locationName);
+            if (desk is null) return false;
+            _dbContext.Desks.Remove(desk);
+            _dbContext.SaveChanges();
+            return true;
         }
 
     }

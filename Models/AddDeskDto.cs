@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HotDeskAPI.Entities;
 
 namespace HotDeskAPI.Models
 {
@@ -10,7 +11,8 @@ namespace HotDeskAPI.Models
     {
         public int DeskNumber { get; set; }
         public string Description { get; set; }
-        public int LocationId { get; set; }
+        public string LocationName { get; set; }
+        //public int LocationId { get; set; }
         public bool Available { get; set; } = true;
     }
 }

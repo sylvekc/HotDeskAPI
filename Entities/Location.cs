@@ -12,6 +12,7 @@ namespace HotDeskAPI.Entities
         public string Buiding { get; set; }
         public int Floor { get; set; }
         public int RoomNumber { get; set; }
+        public string Name { get; set; }
         public virtual List<Desk> Desks { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace HotDeskAPI.Controllers
 {
     [Route("api/desk")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
 
     public class DeskController : ControllerBase
     {
@@ -28,6 +28,14 @@ namespace HotDeskAPI.Controllers
         {
             var deskId = _deskService.AddDesk(dto);
             return Created($"/api/desk/{deskId}", null);
+        }
+
+
+        [HttpDelete("{locationName}/{deskNumber}")]
+        public ActionResult DeleteDesk([FromRoute] int deskNumber, string locationName)
+        {
+            var desk = _deskService.DeleteDesk(deskNumber, locationName);
+            return NoContent();
         }
 
     }

@@ -62,37 +62,43 @@ namespace HotDeskAPI
                     {
                         Buiding = "A",
                         Floor = 1,
-                        RoomNumber = 1
+                        RoomNumber = 1,
+                        Name = "A11"
                     },
                     new Location()
                     {
                         Buiding = "A",
                         Floor = 1,
-                        RoomNumber = 2
+                        RoomNumber = 2,
+                        Name ="A12"
                     },
                     new Location()
                     {
                         Buiding = "A",
                         Floor = 1,
-                        RoomNumber = 3
+                        RoomNumber = 3, 
+                        Name = "A13"
                     },
                     new Location()
                     {
                         Buiding = "B",
                         Floor = 3,
-                        RoomNumber = 10
+                        RoomNumber = 10,
+                        Name = "B310"
                     },
                     new Location()
                     {
                         Buiding = "B",
                         Floor = 3,
-                        RoomNumber = 11
+                        RoomNumber = 11,
+                        Name ="B311",
                     },
                     new Location()
                     {
                         Buiding = "B",
                         Floor = 3,
-                        RoomNumber = 12
+                        RoomNumber = 12,
+                        Name = "B312"
                     },
                 };
 
