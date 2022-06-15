@@ -35,13 +35,13 @@ namespace HotDeskAPI.Services
 
         public int AddReservation(AddReservationDto dto)
         {
-            var isPossibleToAddReservation = _dbContext.Reservations.Where(x => x.DeskNumber == dto.DeskNumber).Any(
+            var isImpossibleToAddReservation = _dbContext.Reservations.Where(x => x.DeskNumber == dto.DeskNumber).Any(
                 x => x.From >= dto.From && x.From <= dto.To ||
                      x.To >= dto.From && x.To <= dto.To);
-            var isPossibleToAddReservation1 =
+            var isImpossibleToAddReservation1 =
                 _dbContext.Reservations.Where(x => x.DeskNumber == dto.DeskNumber).Any(x => x.From <= dto.From && x.To >= dto.To);
 
-            if (isPossibleToAddReservation || isPossibleToAddReservation1)
+            if (isImpossibleToAddReservation || isImpossibleToAddReservation1)
             {
                 throw new ForbidException("You can't add reservation. That desk is taken at this time.");
             }
@@ -59,6 +59,12 @@ namespace HotDeskAPI.Services
 
             var reservation = _mapper.Map<Reservation>(dto);
             var deskId = _dbContext.Desks.FirstOrDefault(x => x.DeskNumber == dto.DeskNumber).Id;
+            var availableDeskToReserve = _dbContext.Desks.Any(x => x.DeskNumber == dto.DeskNumber && x.Available);
+            if (!availableDeskToReserve)
+            {
+                throw new ForbidException("This desk is unavailable.");
+            }
+
             reservation.DeskLocation = dto.LocationName.ToUpper();
             reservation.DeskId = deskId;
             reservation.From = dto.From;
@@ -76,17 +82,22 @@ namespace HotDeskAPI.Services
             var reservation = _dbContext.Reservations.FirstOrDefault(x => x.Id == reservationId);
             var newDeskId = _dbContext.Desks.FirstOrDefault(x => x.DeskNumber == dto.DeskNumber).Id;
 
-            var possibleToReserveNewDesk1 = _dbContext.Reservations.Where(x => x.DeskId == newDeskId).Any(x =>
+            var impossibleToReserveNewDesk1 = _dbContext.Reservations.Where(x => x.DeskId == newDeskId).Any(x =>
                 x.From >= reservation.From && x.From <= reservation.To ||
                 x.To >= reservation.From && x.To <= reservation.To);
-            var possibleToReserveNewDesk2 = _dbContext.Reservations.Where(x => x.DeskId == newDeskId)
+            var impossibleToReserveNewDesk2 = _dbContext.Reservations.Where(x => x.DeskId == newDeskId)
                 .Any(x => x.From <= reservation.From && x.To >= reservation.To);
 
-            if (possibleToReserveNewDesk1 || possibleToReserveNewDesk2)
+            if (impossibleToReserveNewDesk1 || impossibleToReserveNewDesk2)
             {
                 throw new ForbidException("You can't reserve this desk. It is currently reserved at this time.");
             }
 
+            var availableDeskToReserve = _dbContext.Desks.Any(x => x.DeskNumber == dto.DeskNumber && x.Available);
+            if (!availableDeskToReserve)
+            {
+                throw new ForbidException("This desk is unavailable");
+            }
 
             var authorizationResult = _authorizationService.AuthorizeAsync(_userContextService.User, reservation,
                 new ResourceOperationRequirement(ResourceOperation.Update)).Result;

@@ -7,6 +7,7 @@ using AutoMapper;
 using HotDeskAPI.Entities;
 using HotDeskAPI.Exceptions;
 using HotDeskAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotDeskAPI.Services
 {
@@ -15,6 +16,7 @@ namespace HotDeskAPI.Services
         int AddDesk(AddDeskDto dto);
         bool DeleteDesk(int deskNumber, string locationName);
         bool ChangeAvailability(int deskNumber);
+        IEnumerable<DeskDto> GetAllDesks(string searchPhrase);
     }
 
     public class DeskService : IDeskService
@@ -82,6 +84,15 @@ namespace HotDeskAPI.Services
             _dbContext.SaveChanges();
             return true;
         }
+
+        public IEnumerable<DeskDto> GetAllDesks(string searchPhrase)
+        {
+            var desks = _dbContext.Desks.Where(x => searchPhrase == null || (x.LocationName.ToLower().Contains(searchPhrase.ToLower())))
+                .ToList();
+            var desksDtos = _mapper.Map<List<DeskDto>>(desks);
+            return desksDtos;
+        }
+
     }
 
 }
