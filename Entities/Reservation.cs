@@ -17,6 +17,8 @@ namespace HotDeskAPI.Entities
         public virtual Desk Desk { get; set; }
         public int UserId { get; set; }
         public virtual User User { get; set; }
+        public int DeskNumber { get; set; }
+        public string DeskLocation { get; set; }
 
     }
 }
