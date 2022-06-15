@@ -3,11 +3,13 @@ using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using HotDeskAPI;
+using HotDeskAPI.Authorization;
 using HotDeskAPI.Entities;
 using HotDeskAPI.Middleware;
 using HotDeskAPI.Models;
 using HotDeskAPI.Models.Validators;
 using HotDeskAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
@@ -34,7 +36,7 @@ builder.Services.AddAuthentication(option =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey)),
     };
 });
-
+builder.Services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
 builder.Services.AddControllers().AddFluentValidation();
 builder.Services.AddDbContext<HotDeskDbContext>();
 builder.Services.AddScoped<Seeder>();

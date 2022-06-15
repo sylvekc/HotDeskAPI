@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using HotDeskAPI.Authorization;
 using HotDeskAPI.Entities;
 using HotDeskAPI.Exceptions;
 using HotDeskAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HotDeskAPI.Services
 {
@@ -21,16 +23,40 @@ namespace HotDeskAPI.Services
         private readonly HotDeskDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly IUserContextService _userContextService;
+        private readonly IAuthorizationService _authorizationService;
 
-        public ReservationService(HotDeskDbContext dbContext, IMapper mapper, IUserContextService userContextService)
+        public ReservationService(HotDeskDbContext dbContext, IMapper mapper, IUserContextService userContextService, IAuthorizationService authorizationService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _userContextService = userContextService;
+            _authorizationService = authorizationService;
         }
 
         public int AddReservation(AddReservationDto dto)
         {
+            var isPossibleToAddReservation = _dbContext.Reservations.Where(x => x.DeskNumber == dto.DeskNumber).Any(
+                x => x.From >= dto.From && x.From <= dto.To ||
+                     x.To >= dto.From && x.To <= dto.To);
+            var isPossibleToAddReservation1 =
+                _dbContext.Reservations.Where(x => x.DeskNumber == dto.DeskNumber).Any(x => x.From <= dto.From && x.To >= dto.To);
+
+            if (isPossibleToAddReservation || isPossibleToAddReservation1)
+            {
+                throw new ForbidException("You can't add reservation. That desk is taken at this time.");
+            }
+
+            var lengthOfTheReservation = (dto.To - dto.From).Days;
+            if (lengthOfTheReservation < 1)
+            {
+                throw new BadRequestException("You have to reserve the desk at least for 1 day.");
+            }
+
+            if (lengthOfTheReservation > 7)
+            {
+                throw new BadRequestException("You can reserve the desk max for 7 days.");
+            }
+
             var reservation = _mapper.Map<Reservation>(dto);
             var deskId = _dbContext.Desks.FirstOrDefault(x => x.DeskNumber == dto.DeskNumber).Id;
             reservation.DeskLocation = dto.LocationName.ToUpper();
@@ -49,6 +75,26 @@ namespace HotDeskAPI.Services
         {
             var reservation = _dbContext.Reservations.FirstOrDefault(x => x.Id == reservationId);
             var newDeskId = _dbContext.Desks.FirstOrDefault(x => x.DeskNumber == dto.DeskNumber).Id;
+
+            var possibleToReserveNewDesk1 = _dbContext.Reservations.Where(x => x.DeskId == newDeskId).Any(x =>
+                x.From >= reservation.From && x.From <= reservation.To ||
+                x.To >= reservation.From && x.To <= reservation.To);
+            var possibleToReserveNewDesk2 = _dbContext.Reservations.Where(x => x.DeskId == newDeskId)
+                .Any(x => x.From <= reservation.From && x.To >= reservation.To);
+
+            if (possibleToReserveNewDesk1 || possibleToReserveNewDesk2)
+            {
+                throw new ForbidException("You can't reserve this desk. It is currently reserved at this time.");
+            }
+
+
+            var authorizationResult = _authorizationService.AuthorizeAsync(_userContextService.User, reservation,
+                new ResourceOperationRequirement(ResourceOperation.Update)).Result;
+            if (!authorizationResult.Succeeded)
+            {
+                throw new ForbidException("You can't make changes at this reservation.");
+            }
+
             if (reservation is null)
             {
                 throw new NotFoundException($"Reservation with ID: {reservation} doesn't exist.");

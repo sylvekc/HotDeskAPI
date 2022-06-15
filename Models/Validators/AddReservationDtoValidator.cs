@@ -32,20 +32,7 @@ namespace HotDeskAPI.Models.Validators
             });
 
             RuleFor(x => x.From).Must(x => x.Date > DateTime.Now);
-            RuleFor(x => x.To).Custom((value, context) =>
-            {
-                var day = DateTime.Now.AddDays(1);
-                var week = DateTime.Now.AddDays(7);
-                if (value < day)
-                {
-                    context.AddFailure("You have to reserve desk at least for 1 day.");
-                }
 
-                if (value > week)
-                {
-                    context.AddFailure("You can reserve desk max for week");
-                }
-            });
         }
     }
 }

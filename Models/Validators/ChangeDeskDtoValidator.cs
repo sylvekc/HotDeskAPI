@@ -14,7 +14,7 @@ namespace HotDeskAPI.Models.Validators
         {
             RuleFor(x => x.DeskNumber).Custom((value, context) =>
             {
-                var existingDesk = dbContext.Reservations.Any(x => x.DeskNumber == value);
+                var existingDesk = dbContext.Desks.Any(x => x.DeskNumber == value);
                 if (!existingDesk)
                 {
                     context.AddFailure($"Desk with number {value} doesn't exist.");
@@ -23,7 +23,7 @@ namespace HotDeskAPI.Models.Validators
 
             RuleFor(x => x.DeskLocation).Custom((value, context) =>
             {
-                var existingLocation = dbContext.Reservations.Any(x => x.DeskLocation == value);
+                var existingLocation = dbContext.Locations.Any(x => x.Name == value);
                 if (!existingLocation)
                 {
                     context.AddFailure($"Location {value} doesn't exist.");
