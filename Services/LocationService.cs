@@ -13,6 +13,7 @@ namespace HotDeskAPI.Services
     public interface ILocationService
     {
         int AddLocation(AddLocationDto dto);
+        bool DeleteLocation(string name);
     }
 
     public class LocationService : ILocationService
@@ -43,6 +44,18 @@ namespace HotDeskAPI.Services
             _dbContext.Locations.Add(location);
             _dbContext.SaveChanges();
             return location.Id;
+        }
+
+        public bool DeleteLocation(string name)
+        {
+            var location = _dbContext.Locations.FirstOrDefault(x => x.Name == name.ToUpper());
+            if (location is null)
+            {
+                throw new NotFoundException($"Location with name {name.ToUpper()} doesn't exist");
+            }
+            _dbContext.Locations.Remove(location);
+            _dbContext.SaveChanges();
+            return true;
         }
     }
 }

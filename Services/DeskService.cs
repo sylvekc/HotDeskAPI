@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using HotDeskAPI.Entities;
+using HotDeskAPI.Exceptions;
 using HotDeskAPI.Models;
 
 namespace HotDeskAPI.Services
@@ -31,7 +32,7 @@ namespace HotDeskAPI.Services
             var desk = _mapper.Map<Desk>(dto);
             int locationId = _dbContext.Locations.FirstOrDefault(x => x.Name == dto.LocationName).Id;
             desk.LocationId = locationId;
-            desk.LocationName = dto.LocationName;
+            desk.LocationName = dto.LocationName.ToUpper();
             desk.Description = dto.Description;
             desk.DeskNumber = dto.DeskNumber;
             desk.Available = true;
@@ -43,8 +44,11 @@ namespace HotDeskAPI.Services
 
         public bool DeleteDesk(int deskNumber, string locationName)
         {
-            var desk = _dbContext.Desks.FirstOrDefault(x => x.DeskNumber == deskNumber && x.Location.Name == locationName);
-            if (desk is null) return false;
+            var desk = _dbContext.Desks.FirstOrDefault(x => x.DeskNumber == deskNumber && x.Location.Name == locationName.ToUpper());
+            if (desk is null)
+            {
+                throw new NotFoundException($"Desk with number {deskNumber} in {locationName.ToUpper()} doesn't exist.");
+            }
             _dbContext.Desks.Remove(desk);
             _dbContext.SaveChanges();
             return true;

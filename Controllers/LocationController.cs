@@ -29,5 +29,12 @@ namespace HotDeskAPI.Controllers
             return Created($"/api/location/{locationId}", null);
         }
 
+        [HttpDelete("{name}")]
+        public ActionResult DeleteLocation([FromRoute] string name)
+        {
+            _locationService.DeleteLocation(name);
+            return NoContent();
+        }
+
     }
 }
