@@ -9,6 +9,7 @@ using HotDeskAPI.Entities;
 using HotDeskAPI.Exceptions;
 using HotDeskAPI.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotDeskAPI.Services
 {
@@ -16,6 +17,8 @@ namespace HotDeskAPI.Services
     {
         int AddReservation(AddReservationDto dto);
         bool ChangeDesk(int reservationId, ChangeDeskDto dto);
+        IEnumerable<GetReservationsForAdminDto> GetReservationsForAdmin();
+        IEnumerable<GetReservationsForEmpleyeeDto> GetReservationsForEmployee();
     }
 
     public class ReservationService : IReservationService
@@ -24,6 +27,7 @@ namespace HotDeskAPI.Services
         private readonly IMapper _mapper;
         private readonly IUserContextService _userContextService;
         private readonly IAuthorizationService _authorizationService;
+        
 
         public ReservationService(HotDeskDbContext dbContext, IMapper mapper, IUserContextService userContextService, IAuthorizationService authorizationService)
         {
@@ -123,6 +127,23 @@ namespace HotDeskAPI.Services
             _dbContext.SaveChanges();
             return true;
         }
+
+        public IEnumerable<GetReservationsForAdminDto> GetReservationsForAdmin()
+        {
+            var reservations = _dbContext.Reservations.Where(x => x.To >= DateTime.Now).OrderBy(x => x.From).ToList();
+            var reservationsDtos = _mapper.Map<List<GetReservationsForAdminDto>>(reservations);
+            return reservationsDtos;
+        }
+
+
+        public IEnumerable<GetReservationsForEmpleyeeDto> GetReservationsForEmployee()
+        {
+            var reservations = _dbContext.Reservations.Where(x => x.To >= DateTime.Now).OrderBy(x => x.From).ToList();
+            var reservationsDtos = _mapper.Map<List<GetReservationsForEmpleyeeDto>>(reservations);
+            return reservationsDtos;
+        }
+
+
 
     }
 }

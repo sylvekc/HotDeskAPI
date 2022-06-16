@@ -35,5 +35,23 @@ namespace HotDeskAPI.Controllers
             _reservationService.ChangeDesk(reservationId, dto);
             return Ok();
         }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<GetReservationsForAdminDto>> GetReservations()
+        {
+            if (User.IsInRole("Admin"))
+            {
+                var reservationsDtos = _reservationService.GetReservationsForAdmin();
+                return Ok(reservationsDtos);
+            }
+
+            if (User.IsInRole("Employee"))
+            {
+                var reservationsDtos = _reservationService.GetReservationsForEmployee();
+                return Ok(reservationsDtos);
+            }
+
+            return BadRequest();
+        }
     }
 }

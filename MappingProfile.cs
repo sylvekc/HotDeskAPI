@@ -12,6 +12,8 @@ namespace HotDeskAPI
             CreateMap<AddLocationDto, Location>();
             CreateMap<AddReservationDto, Reservation>();
             CreateMap<Desk, DeskDto>();
+            CreateMap<Reservation, GetReservationsForAdminDto>();
+            CreateMap<Reservation, GetReservationsForEmpleyeeDto>();
         }
     }
 }

@@ -47,9 +47,9 @@ namespace HotDeskAPI.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult<IEnumerable<DeskDto>> GetAllDesks([FromQuery]string? searchPhrase)
+        public ActionResult<IEnumerable<DeskDto>> GetAllDesks([FromQuery]string? location)
         {
-            var desksDtos = _deskService.GetAllDesks(searchPhrase);
+            var desksDtos = _deskService.GetAllDesks(location);
             return Ok(desksDtos);
         }
 

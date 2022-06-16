@@ -85,10 +85,10 @@ namespace HotDeskAPI.Services
             return true;
         }
 
-        public IEnumerable<DeskDto> GetAllDesks(string searchPhrase)
+        public IEnumerable<DeskDto> GetAllDesks(string location)
         {
-            var desks = _dbContext.Desks.Where(x => searchPhrase == null || (x.LocationName.ToLower().Contains(searchPhrase.ToLower())))
-                .ToList();
+            var desks = _dbContext.Desks.Where(x => location == null || (x.LocationName.ToLower().Contains(location.ToLower())))
+                .OrderBy(x => x.LocationName).ToList();
             var desksDtos = _mapper.Map<List<DeskDto>>(desks);
             return desksDtos;
         }
