@@ -9,18 +9,16 @@ namespace HotDeskAPI.Entities
 {
     public class HotDeskDbContext : DbContext
     {
-        private string _connectionString = "Server = localhost; Database=HotDeskAPI;Trusted_Connection=True;";
+        public HotDeskDbContext(DbContextOptions<HotDeskDbContext> options) : base(options)
+        {
+            
+        }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Desk> Desks { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(_connectionString);
-        }
 
     }
 }

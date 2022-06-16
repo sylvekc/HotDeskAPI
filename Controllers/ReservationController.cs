@@ -22,6 +22,8 @@ namespace HotDeskAPI.Controllers
             _reservationService = reservationService;
         }
 
+
+
         [HttpPost]
         public ActionResult AddReservation([FromForm]AddReservationDto dto)
         {
@@ -29,12 +31,18 @@ namespace HotDeskAPI.Controllers
             return Created($"/api/reservation/{reservationId}", null);
         }
 
+
+
+
         [HttpPatch("{reservationId}")]
         public ActionResult ChangeDesk([FromRoute]int reservationId, [FromForm]ChangeDeskDto dto)
         {
             _reservationService.ChangeDesk(reservationId, dto);
             return Ok();
         }
+
+
+
 
         [HttpGet]
         public ActionResult<IEnumerable<GetReservationsForAdminDto>> GetReservations()

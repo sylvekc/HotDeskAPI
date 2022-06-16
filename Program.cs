@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -11,7 +12,10 @@ using HotDeskAPI.Models.Validators;
 using HotDeskAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+
+[assembly: InternalsVisibleTo("HotDeskAPI.IntegrationTests")]
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +42,8 @@ builder.Services.AddAuthentication(option =>
 });
 builder.Services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
 builder.Services.AddControllers().AddFluentValidation();
-builder.Services.AddDbContext<HotDeskDbContext>();
+builder.Services.AddDbContext<HotDeskDbContext>
+    (options => options.UseSqlServer(builder.Configuration.GetConnectionString("HotDeskDbConnection")));
 builder.Services.AddScoped<Seeder>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<IAccountService, AccountService>();
@@ -78,3 +83,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+public partial class Startup{}
